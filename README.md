@@ -1,5 +1,6 @@
 # Epic Free Game Webhook
 [![Audit](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/audit.yaml/badge.svg)](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/audit.yaml) [![Docker build](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/docker-build.yaml/badge.svg)](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/docker-build.yaml) [![Docker publish by push](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/docker-push.yaml/badge.svg)](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/docker-push.yaml) [![Linter](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/linter.yaml/badge.svg)](https://github.com/GSaiki26/epic-free-game-webhook/actions/workflows/linter.yaml)
+
 The Epic Free Game Webhook is a Rust application that checks every time it runs if some new games has been released on Epic Games Store.
 It's webhook request has been based on ``Discord`` embed messages.
 
