@@ -17,7 +17,7 @@ To run the program, you may want to use Docker:
 ```sh
 # Simple docker
 docker build -t gsaiki26/epic-free-game-webhook .;
-docker run --rm --env-file=.env --name gsaiki26/epic-free-game-webhook gsaiki26/epic-free-game-webhook;
+docker run --rm --env-file=.env -v ./cache:/app/cache:rw --name gsaiki26/epic-free-game-webhook gsaiki26/epic-free-game-webhook;
 
 # Docker-compose
 docker-compose up --build -f ./docker-compose.yaml;
