@@ -18,10 +18,10 @@ To run the program, you may want to use Docker:
 ```sh
 # Simple builded docker
 docker build -t gsaiki26/epic-free-game-webhook .;
-docker run --rm --env-file=.env --name epic-free-game-webhook gsaiki26/epic-free-game-webhook;
+docker run --rm --env-file=.env -v $(pwd)/cache:/app/cache:rw --name epic-free-game-webhook gsaiki26/epic-free-game-webhook;
 
-# Simple pulled image
-docker run --rm --env-file=.env --name epic-free-game-webhook gsaiki26/epic-free-game-webhook;
+# Simple pulled image on Hub Docker
+docker run --rm --env-file=.env -v $(pwd)/cache:/app/cache:rw --name epic-free-game-webhook gsaiki26/epic-free-game-webhook;
 
 # Docker-compose
 docker-compose up --build -f ./docker-compose.yaml;
