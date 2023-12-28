@@ -1,8 +1,8 @@
 version: '3.9'
 
 services:
-  epicgames-free-game-webhook:
-    container_name: epicgames-free-game-webhook
+  epic-free-game-webhook:
+    container_name: epic-free-game-webhook
     build: .
     env_file: [.env]
     volumes:

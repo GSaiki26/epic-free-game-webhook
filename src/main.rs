@@ -1,5 +1,4 @@
 // Libs
-// use dotenv::dotenv;
 use reqwest::{Client, Error};
 
 use models::{catalog::CatalogResponse, webhook_message::WebhookMessage};
@@ -14,11 +13,7 @@ async fn notify(catalog: &CatalogResponse) -> Result<(), Error> {
         println!("Sending to the webhook informations about: {}", game.title);
 
         // Create the webhook message.
-        let req_body = WebhookMessage::new(
-            game.title,
-            game.product_slug,
-            game.key_images.first().unwrap(),
-        );
+        let req_body = WebhookMessage::new(&game);
 
         // Send the webhook message. req_body is a json.
         let res = Client::new()
@@ -42,8 +37,6 @@ async fn notify(catalog: &CatalogResponse) -> Result<(), Error> {
 // Main
 #[tokio::main]
 async fn main() {
-    // dotenv().ok();
-
     // Get the current catalog.
     println!("Getting the current catalog...");
 
