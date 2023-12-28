@@ -10,14 +10,18 @@ In order to used it, you may need to check:
 ### Environment Variables
 The template to the environment variables can be found in `.env.example`. Where:
 * CATALOG_URL: The URL to Epic's backend catalog, where the application'll extract every information.
+* CACHE_PATH: The JSON file used to cache the old catalog.
 * WEBHOOK_URL: The webhook's URL. The project uses Discord's webhook.
 
 ### Running
 To run the program, you may want to use Docker:
 ```sh
-# Simple docker
+# Simple builded docker
 docker build -t gsaiki26/epic-free-game-webhook .;
-docker run --rm --env-file=.env --name gsaiki26/epic-free-game-webhook gsaiki26/epic-free-game-webhook;
+docker run --rm --env-file=.env --name epic-free-game-webhook gsaiki26/epic-free-game-webhook;
+
+# Simple pulled image
+docker run --rm --env-file=.env --name epic-free-game-webhook gsaiki26/epic-free-game-webhook;
 
 # Docker-compose
 docker-compose up --build -f ./docker-compose.yaml;

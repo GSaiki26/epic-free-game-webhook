@@ -3,4 +3,4 @@
 
 # Files
 .env
-cache.json
+*.json
