@@ -26,6 +26,7 @@ pub struct SearchStore {
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct StoreGame {
+    pub id: String,
     pub title: String,
     pub description: String,
 
