@@ -20,7 +20,8 @@ async fn check_new_games(cache: &mut Cache, games: &Vec<StoreGame>) {
         println!("Checking \"{}\" from catalog...", game.title);
 
         // Check if the game is in the cache.
-        if cache.get_game(&game.id).is_some() {
+        let game_in_cache = cache.get_game(&game.id);
+        if game_in_cache.is_some() && game_in_cache.unwrap().title == game.title {
             println!("\"{}\" is already in the cache.", game.title);
             continue;
         }

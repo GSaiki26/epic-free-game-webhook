@@ -8,6 +8,7 @@ ENV TZ="America/Sao_Paulo"
 # Update the layer
 RUN apk upgrade --no-cache --update
 RUN apk add --no-cache bash musl-dev tzdata
+RUN date
 
 # Configure the user
 RUN adduser --disabled-password prod
