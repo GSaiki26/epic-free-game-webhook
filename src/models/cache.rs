@@ -1,6 +1,6 @@
 // Libs
 use std::fs::File;
-use std::io::Write;
+use std::io::{self, Write};
 
 use super::catalog::StoreGame;
 
@@ -33,7 +33,7 @@ impl Cache {
      * A method to get a game from the cache.
      */
     pub fn get_game(&self, game_id: &str) -> Option<StoreGame> {
-        println!("Getting from the cache the game#{}...", game_id);
+        println!("Searching the game in the cache...");
 
         // Read the entire cache.
         let cache_file = File::open(&self.filepath).expect("Couldn\'t read the cache.");
@@ -59,32 +59,29 @@ impl Cache {
      * A method to add a game to the cache.
      */
     pub fn add_game(&self, game: &StoreGame) {
-        println!("Adding to the cache the game#{}...", game.id);
+        println!("Adding the game to the cache...");
 
         // Read the entire cache.
         let cache_file = File::open(&self.filepath).expect("Couldn\'t read the cache.");
         let mut cached_games: Vec<StoreGame> =
             serde_json::from_reader(cache_file).expect("Couldn\'t parse the cache.");
 
+        // Remove the game from the cache if it already exists.
+        cached_games.retain(|cached_game| cached_game.id != game.id);
         cached_games.push(game.clone());
 
         // Write the cache back to the file.
-        let mut cache_file = File::create(&self.filepath).expect("Couldn\'t read the cache.");
-        cache_file
-            .set_len(0)
-            .expect("Couldn\'t clear the cache file.");
-        serde_json::to_writer(&cache_file, &cached_games)
-            .expect("Couldn\'t write to the cache file.");
-
-        // Flush the file.
-        cache_file.flush().expect("Couldn\'t flush the cache file.");
+        match self.to_writer(&cached_games) {
+            Ok(_) => println!("Game added to the cache.\n"),
+            Err(_) => eprintln!("Couldn\'t add the game to the cache."),
+        }
     }
 
     /**
      * A method to remove a game from the cache.
      */
     pub fn remove_game(&self, game_id: &str) {
-        println!("Removing from the cache the game#{}...", game_id);
+        println!("Removing the game from the cache...");
 
         // Read the entire cache.
         let cache_file = File::open(&self.filepath).expect("Couldn\'t read the cache.");
@@ -95,15 +92,24 @@ impl Cache {
         cached_games.retain(|game| game.id != game_id);
 
         // Write the cache back to the file.
-        let mut cache_file = File::create(&self.filepath).expect("Couldn\'t write the cache.");
-        cache_file
-            .set_len(0)
-            .expect("Couldn\'t clear the cache file.");
+        match self.to_writer(&cached_games) {
+            Ok(_) => println!("Game removed from the cache.\n"),
+            Err(_) => eprintln!("Couldn\'t remove the game from the cache."),
+        }
+    }
+
+    fn to_writer(&self, games: &Vec<StoreGame>) -> io::Result<()> {
+        // Open as Writer and clear the file.
+        let mut cache_file = File::create(&self.filepath)?;
+        cache_file.set_len(0)?;
 
         // Write the cache back to the file.
-        match serde_json::to_writer(&cache_file, &cached_games) {
-            Ok(_) => cache_file.flush().expect("Couldn\'t flush the cache file."),
-            Err(_) => println!("Couldn\'t remove the game from the cache."),
+        match serde_json::to_writer(&cache_file, &games) {
+            Ok(_) => cache_file.flush(),
+            Err(_) => Err(io::Error::new(
+                io::ErrorKind::Other,
+                "Couldn\'t write to the cache file.",
+            )),
         }
     }
 }
