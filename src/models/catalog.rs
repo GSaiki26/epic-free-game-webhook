@@ -34,16 +34,33 @@ pub struct StoreGame {
     #[serde(rename = "productSlug")]
     pub product_slug: Option<String>,
 
-    #[serde(rename = "effectiveDate")]
-    pub effective_date: String,
-
-    #[serde(rename = "expiryDate")]
-    pub expiry_date: Option<String>,
+    pub promotions: Promotions,
 
     #[serde(rename = "keyImages")]
     pub key_images: Vec<KeyImage>,
 
     pub url: Option<String>,
+}
+
+#[derive(Clone, Deserialize, PartialEq, Serialize)]
+pub struct Promotions {
+    #[serde(rename = "promotionalOffers")]
+    pub promotional_offers: Vec<PromotionalOffer>,
+}
+
+#[derive(Clone, Deserialize, PartialEq, Serialize)]
+pub struct PromotionalOffer {
+    #[serde(rename = "promotionalOffers")]
+    pub promotional_offers: Vec<Offer>,
+}
+
+#[derive(Clone, Deserialize, PartialEq, Serialize)]
+pub struct Offer {
+    #[serde(rename = "startDate")]
+    pub start_date: String,
+
+    #[serde(rename = "endDate")]
+    pub end_date: String,
 }
 
 #[derive(Clone, Deserialize, PartialEq, Serialize)]
