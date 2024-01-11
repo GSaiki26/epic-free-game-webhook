@@ -1,5 +1,5 @@
 // Libs
-use chrono::DateTime;
+use chrono::{DateTime, FixedOffset, Utc};
 use reqwest::{Client, Error};
 use serde::{Deserialize, Serialize};
 
@@ -65,30 +65,18 @@ pub struct DiscordEmbedFooter {
 impl DiscordWebhookMessage {
     pub fn new(game: &StoreGame) -> Self {
         // Check if the game is active.
-        if game.product_slug.is_none() || game.product_slug.as_ref().unwrap() == "[]" {
-            return DiscordWebhookMessage {
-                embeds: vec![DiscordEmbedMessage {
-                    title: format!("Free Game on Epic Store - {}", game.title),
-                    r#type: String::from("rich"),
-                    description: format!("**Status: Soon**\n\n{}", &game.description),
-                    url: String::from("https://www.epicgames.com/store/en-US/free-games"),
-                    image: DiscordEmbedImage {
-                        url: game.key_images.first().unwrap().url.clone(),
-                    },
-                    footer: DiscordEmbedFooter {
-                        text: String::from("Soon"),
-                    },
-                }],
-            };
-        }
+        let (offer_start, _) = Self::get_offer_dates(game);
 
-        let footer_text = Self::get_footer(game);
+        let mut description = format!("**Status: Available**\n\n{}", &game.description);
+        if offer_start > Utc::now() {
+            description = format!("**Status: Soon**\n\n{}", &game.description);
+        }
 
         Self {
             embeds: vec![DiscordEmbedMessage {
                 title: format!("Epic Games Store - {}", game.title),
                 r#type: String::from("rich"),
-                description: format!("**Status: Available**\n\n{}", &game.description),
+                description,
                 url: format!(
                     "https://store.epicgames.com/en-US/p/{}",
                     game.product_slug.as_ref().unwrap()
@@ -96,7 +84,9 @@ impl DiscordWebhookMessage {
                 image: DiscordEmbedImage {
                     url: game.key_images.first().unwrap().url.clone(),
                 },
-                footer: DiscordEmbedFooter { text: footer_text },
+                footer: DiscordEmbedFooter {
+                    text: Self::get_footer(game),
+                },
             }],
         }
     }
@@ -107,16 +97,31 @@ impl DiscordWebhookMessage {
      */
     fn get_footer(game: &StoreGame) -> String {
         // Parse the date.
-        let dt_init = DateTime::parse_from_rfc3339(&game.effective_date).unwrap();
-        let dt_init = dt_init.with_timezone(&chrono::Local);
-        let mut footer_text = format!("{}", dt_init.format("%Y/%m/%d %H:%M"));
+        let (offer_start, offer_end) = Self::get_offer_dates(game);
 
-        if let Some(dt) = game.expiry_date.clone() {
-            let dt = DateTime::parse_from_rfc3339(&dt).unwrap();
-            let dt = dt.with_timezone(&chrono::Local);
-            footer_text = format!("{} - {}", footer_text, dt.format("%Y/%m/%d %H:%M"));
-        }
+        format!(
+            "{} - {}",
+            offer_start.format("%Y/%m/%d %H:%M"),
+            offer_end.format("%Y/%m/%d %H:%M")
+        )
+    }
 
-        footer_text
+    /**
+     * A method to get the dates from the offer.
+     */
+    fn get_offer_dates(game: &StoreGame) -> (DateTime<FixedOffset>, DateTime<FixedOffset>) {
+        // Get the game promotion time.
+        let offer = game
+            .promotions
+            .promotional_offers
+            .first()
+            .expect("Couldn\'t get the promotion time.")
+            .promotional_offers
+            .first()
+            .unwrap();
+        (
+            DateTime::parse_from_rfc3339(&offer.start_date).unwrap(),
+            DateTime::parse_from_rfc3339(&offer.end_date).unwrap(),
+        )
     }
 }
