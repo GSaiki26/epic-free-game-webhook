@@ -6,4 +6,4 @@ services:
     build: .
     env_file: [.env]
     volumes:
-      - ./vol:/app/vol:rw
+      - ./cache:/app/cache:rw

@@ -12,7 +12,7 @@ jobs:
       fail-fast: true
       matrix:
         os: [ ubuntu-22.04 ]
-        version: [ 1.75 ]
+        version: [ 1.73 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
