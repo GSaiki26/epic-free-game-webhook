@@ -1,5 +1,4 @@
 // Libs
-use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
 // Structs
@@ -67,23 +66,4 @@ pub struct Offer {
 pub struct KeyImage {
     pub r#type: String,
     pub url: String,
-}
-
-// Functions
-/**
- * A method to get the current catalog from EpicGames.
-*/
-pub async fn get_catalog() -> CatalogResponse {
-    println!("Getting the current catalog...");
-
-    // Get the current catalog.
-    let url = std::env::var("CATALOG_URL").expect("CATALOG_URL not found.");
-    Client::new()
-        .get(url)
-        .send()
-        .await
-        .expect("Couldn\'t connect to epicGames.")
-        .json::<CatalogResponse>()
-        .await
-        .expect("Couldn\'t parse the CATALOG_URL body.")
 }
